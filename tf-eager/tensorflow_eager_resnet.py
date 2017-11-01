@@ -32,6 +32,7 @@ from tensorflow.python.eager import graph_callable
 images = tf.zeros((BATCH_SIZE, HEIGHT, WIDTH, DEPTH))
 l = tf.cast(tf.random_uniform([BATCH_SIZE], maxval=NUM_CLASSES), tf.int32)
 labels = tf.one_hot(l, NUM_CLASSES)
+
 @graph_callable.graph_callable([])
 def resnet_loss():
     """Resnet loss from random input"""
@@ -45,10 +46,11 @@ def resnet_loss():
 loss_and_grads_fn = tfe.implicit_value_and_gradients(resnet_loss)
 optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
 losses = []
-for i in range(500):
+
+for i in range(100):
   loss, grads_and_vars = loss_and_grads_fn()
   optimizer.apply_gradients(grads_and_vars)
   print(loss)
   losses.append(loss.numpy())
 
-print(losses)
+print("Final losses list: {}".format(losses))
